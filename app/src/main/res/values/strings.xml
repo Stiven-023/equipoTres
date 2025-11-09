@@ -1,7 +1,12 @@
 <resources>
-    <string name="app_name">Equipo Tres</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="imagen_inventario">imagen inventario</string>
     <string name="inventory">Inventory</string>
+    <string name="app_name">InventoryWidget</string>
+    <string name="inventory_image">Imagen de inventario</string>
+    <string name="logout">Cerrar sesión</string>
+    <string name="add_product">Agregar producto</string>
+    <string name="product_name">Nombre del producto</string>
+    <string name="product_id">ID del producto</string>
+    <string name="product_price">Precio del producto</string>
 </resources>
