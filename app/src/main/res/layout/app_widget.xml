@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="12dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <!--android:background="@drawable/widget_bg"-->
+    <TextView
+        android:id="@+id/tvSaldoTotal"
+        android:text="💰 Saldo total: --"
+        android:textSize="18sp"
+        android:textColor="@android:color/white"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</LinearLayout>
+
+
+
+    <!--<?xml version="1.0" encoding="utf-8"?>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/widget_root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="8dp"
+        android:background="@drawable/widget_bg">
+
+
+
+        <TextView
+            android:id="@+id/widget_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Widget de ejemplo"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"/>
+    </LinearLayout>-->
