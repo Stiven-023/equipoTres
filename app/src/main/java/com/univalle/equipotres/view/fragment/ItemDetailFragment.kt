@@ -6,12 +6,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.univalle.equipotres.R
 import com.univalle.equipotres.databinding.FragmentItemDetailBinding
 import com.univalle.equipotres.model.Product
+import com.univalle.equipotres.view.adapter.ProductAdapter
 import com.univalle.equipotres.view.model.DetailViewModel
 import com.univalle.equipotres.view.model.HomeViewModel
 
@@ -19,6 +21,8 @@ class ItemDetailFragment : androidx.fragment.app.Fragment()  {
     private var _binding: FragmentItemDetailBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: DetailViewModel
+    private lateinit var productAdapter: ProductAdapter
+
 
 
     override fun onCreateView(
@@ -46,6 +50,13 @@ class ItemDetailFragment : androidx.fragment.app.Fragment()  {
 
         binding.btnDeleteProduct.setOnClickListener {
             showDeleteConfirmationDialog(product?.id)
+        }
+
+        binding.fabEditProduct.setOnClickListener {
+            val bundle = Bundle().apply {
+                putParcelable("product", product) // requiere @Parcelize en Product
+            }
+            findNavController().navigate(R.id.action_item_detail_to_editProductFragment, bundle)
         }
 
         // Volver a HomeFragment

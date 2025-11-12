@@ -35,17 +35,27 @@
 
     </fragment>
 
-<fragment
-    android:id="@+id/itemDetailFragment"
-    android:name="com.univalle.equipotres.view.fragment.ItemDetailFragment"
-    android:label="ItemDetailFragment"
-    tools:layout="@layout/fragment_item_detail"
-    >
-    <action
-        android:id="@+id/action_item_detail_to_homeFragment"
-        app:destination="@id/homeFragment" />
+    <fragment
+        android:id="@+id/itemDetailFragment"
+        android:name="com.univalle.equipotres.view.fragment.ItemDetailFragment"
+        android:label="ItemDetailFragment"
+        tools:layout="@layout/fragment_item_detail"
+        >
+        <action
+            android:id="@+id/action_item_detail_to_homeFragment"
+            app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_item_detail_to_editProductFragment"
+            app:destination="@id/editProductFragment"/>
 
+    </fragment>
 
-</fragment>
+    <fragment
+        android:id="@+id/editProductFragment"
+        android:name="com.univalle.equipotres.view.fragment.EditProductFragment"
+        android:label="EditProductFragment"
+        tools:layout="@layout/fragment_edit_product"
+        >
 
+    </fragment>
 </navigation>
