@@ -24,6 +24,10 @@ class ProductRepository(private val productDao: ProductDao) {
         productDao.deleteProduct(product)
     }
 
+    suspend fun deleteProductById(productId: Int) {
+        productDao.deleteProductById(productId)
+    }
+
     suspend fun getTotalInventoryValue(): Double {
         return productDao.getTotalInventoryValue() ?: 0.0
     }
