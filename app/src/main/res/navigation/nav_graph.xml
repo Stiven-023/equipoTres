@@ -29,8 +29,23 @@
             app:destination="@id/loginFragment"
             app:popUpTo="@id/homeFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_homeFragment_to_itemDetailFragment"
+            app:destination="@id/itemDetailFragment"/>
 
     </fragment>
 
+<fragment
+    android:id="@+id/itemDetailFragment"
+    android:name="com.univalle.equipotres.view.fragment.ItemDetailFragment"
+    android:label="ItemDetailFragment"
+    tools:layout="@layout/fragment_item_detail"
+    >
+    <action
+        android:id="@+id/action_item_detail_to_homeFragment"
+        app:destination="@id/homeFragment" />
+
+
+</fragment>
 
 </navigation>
