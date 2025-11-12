@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.univalle.equipotres.databinding.FragmentItemDetailBinding
+import com.univalle.equipotres.model.Product
 import com.univalle.equipotres.view.model.HomeViewModel
 
 class ItemDetailFragment : androidx.fragment.app.Fragment()  {
@@ -24,17 +25,22 @@ class ItemDetailFragment : androidx.fragment.app.Fragment()  {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val productId = arguments?.getString("productId")
-        Log.d("ItemDetailFragment", "Product ID recibido: $productId")
+        val product = arguments?.getParcelable<Product>("product")
 
-        // Configurar toolbar del fragmento
+        // Asignar valores a la UI
+        product?.let {
+            binding.tvProductName.text = it.name
+            binding.tvProductPrice.text = "$%.2f".format(it.price)
+            binding.tvProductQuantity.text = it.quantity.toString()
+            binding.tvProductTotal.text = "$%.2f".format(it.getTotal())
+        }
+
+        // Volver a HomeFragment
         val toolbar = binding.toolbarDetalle
         toolbar.setNavigationOnClickListener {
-            // Volver a HomeFragment
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

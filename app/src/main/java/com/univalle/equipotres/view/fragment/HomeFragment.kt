@@ -47,15 +47,11 @@ class HomeFragment : androidx.fragment.app.Fragment() {
 
     private fun setupRecyclerView() {
         productAdapter = ProductAdapter { product ->
-//            // Navegar al detalle del producto
             val bundle = Bundle().apply {
-                putString("productId", product.id.toString())
-                putString("productName", product.name)
-                putString("productDescription", product.price.toString())
-                putString("productQuantity", product.quantity.toString())
+                putParcelable("product", product)
             }
+//          Navegar al detalle del producto
             findNavController().navigate(R.id.action_homeFragment_to_itemDetailFragment, bundle)
-            Log.d("HomeFragment", "bundleData: $bundle")
         }
         binding.rvProducts.adapter = productAdapter
     }
