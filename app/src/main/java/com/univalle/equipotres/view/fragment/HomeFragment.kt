@@ -1,6 +1,7 @@
 package com.univalle.equipotres.view.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,9 +47,11 @@ class HomeFragment : androidx.fragment.app.Fragment() {
 
     private fun setupRecyclerView() {
         productAdapter = ProductAdapter { product ->
-            // Navegar al detalle del producto (HU 5.0)
-            // val action = HomeFragmentDirections.actionHomeFragmentToDetailFragment(product.id)
-            // findNavController().navigate(action)
+            val bundle = Bundle().apply {
+                putParcelable("product", product)
+            }
+//          Navegar al detalle del producto
+            findNavController().navigate(R.id.action_homeFragment_to_itemDetailFragment, bundle)
         }
         binding.rvProducts.adapter = productAdapter
     }
