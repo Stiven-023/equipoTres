@@ -5,5 +5,8 @@
     <color name="background">#CC000000</color>
     <color name="toolbar">#424242</color>
     <color name="background_btn_guardar">#FF6347</color>
-
+    <color name="orange">#E6674A</color>
+    <color name="orange_dark">#E7522E</color>
+    <color name="orange_light">#FA8523</color>
+    <color name="opacyblack">#CC000000</color>
 </resources>
