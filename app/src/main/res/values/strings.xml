@@ -9,4 +9,8 @@
     <string name="product_name">Nombre del producto</string>
     <string name="product_id">ID del producto</string>
     <string name="product_price">Precio del producto</string>
+    <string name="top_text_widget">¿Cuánto tengo de inventario?</string>
+    <string name="eye_widget">eye widget</string>
+    <string name="gestionar_inventario">Gestionar Inventario</string>
+    <string name="boton_gestionar_inventario">boton gestionar inventario</string>
 </resources>
