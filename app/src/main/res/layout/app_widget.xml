@@ -61,7 +61,7 @@
 
     <TextView
         android:id="@+id/tvSaldoTotal"
-        android:text="$ * * * *"
+        android:text="@string/default_show_inventary"
         android:textSize="18sp"
         android:textColor="@android:color/white"
         android:textAlignment="textEnd"
