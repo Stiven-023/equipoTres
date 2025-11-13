@@ -18,4 +18,5 @@
     <string name="eye_widget">eye widget</string>
     <string name="gestionar_inventario">Gestionar Inventario</string>
     <string name="boton_gestionar_inventario">boton gestionar inventario</string>
+    <string name="default_show_inventary">$ * * * *</string>
 </resources>
