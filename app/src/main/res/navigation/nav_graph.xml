@@ -34,7 +34,17 @@
 
         <action
             android:id="@+id/action_homeFragment_to_itemDetailFragment"
+            app:destination="@id/itemDetailFragment"/>
+      
+        <action
+            android:id="@+id/action_homeFragment_to_addProductFragment"
+            app:destination="@id/addProductFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
             app:destination="@id/itemDetailFragment" />
+}
     </fragment>
 
     <!-- 🔍 Detalle del producto -->
@@ -45,6 +55,7 @@
         tools:layout="@layout/fragment_item_detail">
 
         <!-- Acción para volver al Home -->
+
         <action
             android:id="@+id/action_item_detail_to_homeFragment"
             app:destination="@id/homeFragment" />
@@ -75,6 +86,14 @@
         <action
             android:id="@+id/action_editProductFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addProductFragment"
+        android:name="com.univalle.equipotres.view.fragment.AddProductFragment"
+        android:label="AddProductFragment"
+        tools:layout="@layout/fragment_add_product">
+
     </fragment>
 
 </navigation>

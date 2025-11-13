@@ -79,7 +79,7 @@ class HomeFragment : androidx.fragment.app.Fragment() {
     private fun setupClickListeners() {
         // Botón para agregar producto
         binding.fabAddProduct.setOnClickListener {
-            // findNavController().navigate(R.id.action_homeFragment_to_addProductFragment)
+             findNavController().navigate(R.id.action_homeFragment_to_addProductFragment)
         }
 
         // Botón de cerrar sesión
