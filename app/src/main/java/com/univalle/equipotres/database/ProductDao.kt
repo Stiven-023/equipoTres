@@ -32,4 +32,9 @@ interface ProductDao {
 
     @Query("SELECT SUM(price * quantity) FROM products")
     suspend fun getTotalInventoryValue(): Double?
+
+    // 🔸 NUEVO MÉTODO: actualizar solo algunos campos
+    @Query("UPDATE products SET name = :name, price = :price, quantity = :quantity WHERE id = :id")
+    suspend fun updateProductFields(id: Int, name: String, price: Double, quantity: Int)
+
 }

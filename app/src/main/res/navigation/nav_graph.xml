@@ -5,6 +5,7 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/loginFragment">
 
+    <!-- 🔐 Pantalla de Login -->
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.univalle.equipotres.view.fragment.LoginFragment"
@@ -18,6 +19,7 @@
             app:popUpToInclusive="true" />
     </fragment>
 
+    <!-- 🏠 Pantalla principal (Home) -->
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.univalle.equipotres.view.fragment.HomeFragment"
@@ -29,33 +31,50 @@
             app:destination="@id/loginFragment"
             app:popUpTo="@id/homeFragment"
             app:popUpToInclusive="true" />
+
         <action
             android:id="@+id/action_homeFragment_to_itemDetailFragment"
-            app:destination="@id/itemDetailFragment"/>
-
+            app:destination="@id/itemDetailFragment" />
     </fragment>
 
+    <!-- 🔍 Detalle del producto -->
     <fragment
         android:id="@+id/itemDetailFragment"
         android:name="com.univalle.equipotres.view.fragment.ItemDetailFragment"
         android:label="ItemDetailFragment"
-        tools:layout="@layout/fragment_item_detail"
-        >
+        tools:layout="@layout/fragment_item_detail">
+
+        <!-- Acción para volver al Home -->
         <action
             android:id="@+id/action_item_detail_to_homeFragment"
             app:destination="@id/homeFragment" />
+
+        <!-- Acción para ir a la edición -->
         <action
             android:id="@+id/action_item_detail_to_editProductFragment"
-            app:destination="@id/editProductFragment"/>
+            app:destination="@id/editProductFragment" />
 
+        <!-- Argumento que se pasa al editar -->
+        <argument
+            android:name="product"
+            app:argType="com.univalle.equipotres.model.Product" />
     </fragment>
 
+    <!-- ✏️ Editar producto -->
     <fragment
         android:id="@+id/editProductFragment"
         android:name="com.univalle.equipotres.view.fragment.EditProductFragment"
         android:label="EditProductFragment"
-        tools:layout="@layout/fragment_edit_product"
-        >
+        tools:layout="@layout/fragment_edit_product">
 
+        <argument
+            android:name="product"
+            app:argType="com.univalle.equipotres.model.Product" />
+
+        <!-- Acción opcional para volver al Home -->
+        <action
+            android:id="@+id/action_editProductFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
     </fragment>
+
 </navigation>
