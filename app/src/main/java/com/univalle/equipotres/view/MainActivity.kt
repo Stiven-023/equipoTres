@@ -48,16 +48,16 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         // No borrar la sesión si la actividad se está reiniciando por rotación/config change
-        if (!isChangingConfigurations) {
-            sessionManager.clearSession()
-        }
+        //if (!isChangingConfigurations) {
+        //    sessionManager.clearSession()
+        //}
     }
 
     override fun onDestroy() {
         super.onDestroy()
         // Igual protección por si se llama durante un cambio de configuración
-        if (!isChangingConfigurations) {
-            sessionManager.clearSession()
-        }
+        //if (!isChangingConfigurations) {
+        //    sessionManager.clearSession()
+        //}
     }
 }
