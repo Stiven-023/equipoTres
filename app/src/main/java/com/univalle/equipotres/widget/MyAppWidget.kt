@@ -16,10 +16,14 @@ import kotlinx.coroutines.withContext
 import java.text.NumberFormat
 import java.util.Locale
 
+import com.univalle.equipotres.utils.SessionManager
+
+
 class MyAppWidget : AppWidgetProvider() {
 
     companion object {
         private const val ACTION_TOGGLE_BALANCE = "com.univalle.equipotres.widget.TOGGLE_BALANCE"
+        private lateinit var sessionManager: SessionManager
 
         // Estado del botón de mostrar/ocultar saldo
         private var isBalanceVisible = false
@@ -51,29 +55,45 @@ class MyAppWidget : AppWidgetProvider() {
             )
             views.setOnClickPendingIntent(R.id.btnEyeWidget, togglePendingIntent)
 
-            // Mostrar saldo oculto o visible según el estado
-            if (isBalanceVisible) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    val db = AppDatabase.getDatabase(context)
-                    val totalBalance = db.productDao().getTotalInventoryValue() ?: 0.0
 
-                    val formatoColombiano = NumberFormat.getNumberInstance(Locale("es", "CO"))
-                    formatoColombiano.minimumFractionDigits = 2
-                    formatoColombiano.maximumFractionDigits = 2
-                    val saldoFormateado = "$ ${formatoColombiano.format(totalBalance)}"
+            //-----verificar inicio de sesión-------
+            sessionManager = SessionManager(context)
 
-                    withContext(Dispatchers.Main) {
-                        views.setTextViewText(R.id.tvSaldoTotal, saldoFormateado)
-                        views.setImageViewResource(R.id.btnEyeWidget, R.drawable.eye_slash)
-                        appWidgetManager.updateAppWidget(appWidgetId, views)
+            if (sessionManager.isLoggedIn()){
+                // Mostrar saldo oculto o visible según el estado
+                if (isBalanceVisible) {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val db = AppDatabase.getDatabase(context)
+                        val totalBalance = db.productDao().getTotalInventoryValue() ?: 0.0
+
+                        val formatoColombiano = NumberFormat.getNumberInstance(Locale("es", "CO"))
+                        formatoColombiano.minimumFractionDigits = 2
+                        formatoColombiano.maximumFractionDigits = 2
+                        val saldoFormateado = "$ ${formatoColombiano.format(totalBalance)}"
+
+                        withContext(Dispatchers.Main) {
+                            views.setTextViewText(R.id.tvSaldoTotal, saldoFormateado)
+                            views.setImageViewResource(R.id.btnEyeWidget, R.drawable.eye_slash)
+                            appWidgetManager.updateAppWidget(appWidgetId, views)
+                        }
                     }
+                } else {
+                    // Mostrar asteriscos
+                    views.setTextViewText(R.id.tvSaldoTotal, "$ * * * *")
+                    views.setImageViewResource(R.id.btnEyeWidget, R.drawable.eye)
+                    appWidgetManager.updateAppWidget(appWidgetId, views)
                 }
-            } else {
-                // Mostrar asteriscos
-                views.setTextViewText(R.id.tvSaldoTotal, "$ * * * *")
-                views.setImageViewResource(R.id.btnEyeWidget, R.drawable.eye)
+            }else{
+                // Intent para abrir la app (botón eye) al no haber iniciado sesión
+                val intentVerify = Intent(context, MainActivity::class.java)
+                val pendingIntentVerify = PendingIntent.getActivity(
+                    context, 0, intentVerify, PendingIntent.FLAG_IMMUTABLE
+                )
+                views.setOnClickPendingIntent(R.id.btnEyeWidget, pendingIntentVerify)
                 appWidgetManager.updateAppWidget(appWidgetId, views)
             }
+
+
         }
     }
 
