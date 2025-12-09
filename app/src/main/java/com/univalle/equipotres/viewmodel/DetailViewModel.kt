@@ -1,18 +1,19 @@
-package com.univalle.equipotres.view.model
+package com.univalle.equipotres.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.univalle.equipotres.database.AppDatabase
 import com.univalle.equipotres.model.Product
+import com.univalle.equipotres.repository.ProductRepository
 import kotlinx.coroutines.launch
 
 class DetailViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repository = com.univalle.equipotres.repository.ProductRepository(
-        AppDatabase.getDatabase(application).productDao()
+    private val repository = ProductRepository(
+        AppDatabase.Companion.getDatabase(application).productDao()
     )
 
     private val _product = MutableLiveData<Product>()
