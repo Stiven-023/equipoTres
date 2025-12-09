@@ -1,4 +1,4 @@
-package com.univalle.equipotres.view.model
+package com.univalle.equipotres.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -16,7 +16,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     val allProducts: LiveData<List<Product>>
 
     init {
-        val productDao = AppDatabase.getDatabase(application).productDao()
+        val productDao = AppDatabase.Companion.getDatabase(application).productDao()
         repository = ProductRepository(productDao)
         allProducts = repository.allProducts.asLiveData()
     }

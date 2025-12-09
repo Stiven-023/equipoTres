@@ -13,7 +13,7 @@ import com.univalle.equipotres.R
 import com.univalle.equipotres.databinding.FragmentHomeBinding
 import com.univalle.equipotres.utils.SessionManager
 import com.univalle.equipotres.view.adapter.ProductAdapter
-import com.univalle.equipotres.view.model.HomeViewModel
+import com.univalle.equipotres.viewmodel.HomeViewModel
 
 
 class HomeFragment : androidx.fragment.app.Fragment() {

@@ -14,8 +14,8 @@ import com.univalle.equipotres.R
 import com.univalle.equipotres.databinding.FragmentItemDetailBinding
 import com.univalle.equipotres.model.Product
 import com.univalle.equipotres.view.adapter.ProductAdapter
-import com.univalle.equipotres.view.model.DetailViewModel
-import com.univalle.equipotres.view.model.HomeViewModel
+import com.univalle.equipotres.viewmodel.DetailViewModel
+import com.univalle.equipotres.viewmodel.HomeViewModel
 
 class ItemDetailFragment : androidx.fragment.app.Fragment()  {
     private var _binding: FragmentItemDetailBinding? = null
