@@ -1,34 +1,71 @@
 package com.univalle.equipotres.repository
 
-import com.univalle.equipotres.database.ProductDao
+import com.google.firebase.firestore.FirebaseFirestore
 import com.univalle.equipotres.model.Product
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.channels.trySendBlocking
+import javax.inject.Inject
 
-class ProductRepository(private val productDao: ProductDao) {
+class ProductRepository @Inject constructor(
+    private val firestore: FirebaseFirestore
+) {
 
-    val allProducts: Flow<List<Product>> = productDao.getAllProducts()
+    private val collection = firestore.collection("products")
 
-    suspend fun getProductById(id: Int): Product? {
-        return productDao.getProductById(id)
+    // ---------------------------------------------------------
+    // LIVE UPDATES (Flow para HomeFragment)
+    // ---------------------------------------------------------
+    fun getAllProducts(): Flow<List<Product>> = callbackFlow {
+        val listener = collection.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                close(error)
+                return@addSnapshotListener
+            }
+
+            val products = snapshot?.toObjects(Product::class.java).orEmpty()
+            trySend(products)
+        }
+
+        awaitClose {
+            listener.remove()
+        }
     }
 
-    suspend fun insertProduct(product: Product) {
-        productDao.insertProduct(product)
+
+    // ---------------------------------------------------------
+    // Agregar producto
+    // ---------------------------------------------------------
+    suspend fun addProduct(product: Product) {
+        val docRef = collection.document()  // genera ID
+
+        val productWithId = product.copy(id = docRef.id)
+
+        docRef.set(productWithId).await()   // ← IMPORTANTE: AWAIT!
     }
 
+    // ---------------------------------------------------------
+    // Eliminar producto
+    // ---------------------------------------------------------
+    suspend fun deleteProduct(productId: String) {
+        collection.document(productId).delete().await()
+    }
+
+    // ---------------------------------------------------------
+    // Actualizar producto
+    // ---------------------------------------------------------
     suspend fun updateProduct(product: Product) {
-        productDao.updateProduct(product)
+        collection.document(product.id).set(product).await()
     }
 
-    suspend fun deleteProduct(product: Product) {
-        productDao.deleteProduct(product)
-    }
-
-    suspend fun deleteProductById(productId: Int) {
-        productDao.deleteProductById(productId)
-    }
-
+    // ---------------------------------------------------------
+    // Valor total
+    // ---------------------------------------------------------
     suspend fun getTotalInventoryValue(): Double {
-        return productDao.getTotalInventoryValue() ?: 0.0
+        val snapshot = collection.get().await()
+        val products = snapshot.toObjects(Product::class.java)
+        return products.sumOf { it.price * it.quantity }
     }
 }

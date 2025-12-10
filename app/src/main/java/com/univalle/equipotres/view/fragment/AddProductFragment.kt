@@ -10,17 +10,21 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.univalle.equipotres.database.AppDatabase
 import com.univalle.equipotres.databinding.FragmentAddProductBinding
 import com.univalle.equipotres.model.Product
+import com.univalle.equipotres.repository.ProductRepository
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class AddProductFragment : Fragment() {
 
     private var _binding: FragmentAddProductBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var database: AppDatabase
+    // Inyectar el repositorio provisto por Hilt
+    @Inject lateinit var repository: ProductRepository
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,25 +38,14 @@ class AddProductFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Inicializar base de datos
-        database = AppDatabase.Companion.getDatabase(requireContext())
-
-        // Configurar botón de retroceso
         setupBackButton()
-
-        // Configurar validación de campos
         setupFieldValidation()
-
-        // Configurar botón guardar
         setupSaveButton()
-
-        // Inicialmente el botón está deshabilitado
         updateSaveButtonState()
     }
 
     private fun setupBackButton() {
         binding.btnBack.setOnClickListener {
-            // Navegar de regreso a la ventana Home Inventario
             findNavController().navigateUp()
         }
     }
@@ -66,7 +59,6 @@ class AddProductFragment : Fragment() {
             }
         }
 
-        // Agregar TextWatcher a todos los campos
         binding.etCodigoProducto.addTextChangedListener(textWatcher)
         binding.etNombreArticulo.addTextChangedListener(textWatcher)
         binding.etPrecio.addTextChangedListener(textWatcher)
@@ -74,85 +66,62 @@ class AddProductFragment : Fragment() {
     }
 
     private fun updateSaveButtonState() {
-        val codigoProducto = binding.etCodigoProducto.text.toString().trim()
-        val nombreArticulo = binding.etNombreArticulo.text.toString().trim()
-        val precio = binding.etPrecio.text.toString().trim()
-        val cantidad = binding.etCantidad.text.toString().trim()
+        val filled = binding.etCodigoProducto.text!!.isNotEmpty() &&
+                binding.etNombreArticulo.text!!.isNotEmpty() &&
+                binding.etPrecio.text!!.isNotEmpty() &&
+                binding.etCantidad.text!!.isNotEmpty()
 
-        // El botón se habilita solo si todos los campos están llenos
-        val allFieldsFilled = codigoProducto.isNotEmpty() &&
-                nombreArticulo.isNotEmpty() &&
-                precio.isNotEmpty() &&
-                cantidad.isNotEmpty()
-
-        binding.btnGuardar.isEnabled = allFieldsFilled
-
-        // Cambiar opacidad visual del botón según su estado
-        binding.btnGuardar.alpha = if (allFieldsFilled) 1.0f else 0.5f
+        binding.btnGuardar.isEnabled = filled
+        binding.btnGuardar.alpha = if (filled) 1f else 0.5f
     }
 
     private fun setupSaveButton() {
-        binding.btnGuardar.setOnClickListener {
-            saveProduct()
-        }
+        binding.btnGuardar.setOnClickListener { saveProduct() }
     }
 
     private fun saveProduct() {
-        // Obtener valores de los campos
         val codigo = binding.etCodigoProducto.text.toString().trim()
         val nombre = binding.etNombreArticulo.text.toString().trim()
         val precioStr = binding.etPrecio.text.toString().trim()
         val cantidadStr = binding.etCantidad.text.toString().trim()
 
-        // Validar que los campos numéricos sean válidos
         val precio = precioStr.toDoubleOrNull()
         val cantidad = cantidadStr.toIntOrNull()
 
         if (precio == null || precio <= 0) {
-            Toast.makeText(
-                requireContext(),
-                "Por favor ingrese un precio válido",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(requireContext(), "Ingrese un precio válido", Toast.LENGTH_SHORT).show()
             return
         }
 
         if (cantidad == null || cantidad <= 0) {
-            Toast.makeText(
-                requireContext(),
-                "Por favor ingrese una cantidad válida",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(requireContext(), "Ingrese una cantidad válida", Toast.LENGTH_SHORT).show()
             return
         }
 
-        // Crear el producto (id será autogenerado por Room)
+        // Crear producto con ID vacío (Firestore lo generará)
         val product = Product(
-            id = 0, // Room autogenerará el ID
+            id = "",        // ← Firestore asignará uno
             name = nombre,
             price = precio,
             quantity = cantidad
         )
 
-        // Guardar en la base de datos
         lifecycleScope.launch {
             try {
-                database.productDao().insertProduct(product)
+                repository.addProduct(product)
 
-                // Mostrar mensaje de éxito
                 Toast.makeText(
                     requireContext(),
                     "Producto guardado exitosamente",
                     Toast.LENGTH_SHORT
                 ).show()
 
-                // Navegar de regreso a la ventana Home Inventario
                 findNavController().navigateUp()
 
             } catch (e: Exception) {
                 Toast.makeText(
                     requireContext(),
-                    "Error al guardar el producto: ${e.message}",
+                    "Error al guardar: ${e.message}",
                     Toast.LENGTH_LONG
                 ).show()
             }

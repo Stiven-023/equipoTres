@@ -8,8 +8,11 @@ import androidx.navigation.fragment.NavHostFragment
 import com.univalle.equipotres.R
 import com.univalle.equipotres.databinding.ActivityMainBinding
 import com.univalle.equipotres.utils.SessionManager
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
