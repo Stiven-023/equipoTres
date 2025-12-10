@@ -1,37 +1,28 @@
 package com.univalle.equipotres.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.univalle.equipotres.database.AppDatabase
 import com.univalle.equipotres.model.Product
 import com.univalle.equipotres.repository.ProductRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class DetailViewModel(application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class DetailViewModel @Inject constructor(
+    private val repository: ProductRepository
+) : ViewModel() {
 
-    private val repository = ProductRepository(
-        AppDatabase.Companion.getDatabase(application).productDao()
-    )
-
-    private val _product = MutableLiveData<Product>()
-    val product: LiveData<Product> = _product
-
-    fun loadProduct(productId: Int) {
+    fun updateProduct(product: Product) {
         viewModelScope.launch {
-            val item = repository.getProductById(productId)
-            _product.postValue(item)
+            repository.updateProduct(product)
         }
     }
 
-    fun deleteProductById(productId: Int) {
+    fun deleteProduct(productId: String) {
         viewModelScope.launch {
-            val product = repository.getProductById(productId)
-            product?.let {
-                repository.deleteProductById(product.id)
-            }
+            repository.deleteProduct(productId)
         }
     }
 }
+

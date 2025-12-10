@@ -14,7 +14,9 @@ import com.google.android.material.snackbar.Snackbar
 import com.univalle.equipotres.databinding.FragmentLoginBinding
 import com.univalle.equipotres.R
 import com.univalle.equipotres.utils.SessionManager
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class LoginFragment : androidx.fragment.app.Fragment() {
 
     private var _binding: FragmentLoginBinding? = null
