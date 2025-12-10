@@ -13,4 +13,10 @@
 .externalNativeBuild
 .cxx
 local.properties
-/google-services.json
+
+# Ignorar google-services.json específico de debug
+app/src/debug/google-services.json
+
+# Ignorar google-services.json principal
+app/src/main/java/com/univalle/equipotres/google-services.json
+
