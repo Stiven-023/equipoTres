@@ -7,7 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.univalle.equipotres.R
@@ -16,14 +18,15 @@ import com.univalle.equipotres.model.Product
 import com.univalle.equipotres.view.adapter.ProductAdapter
 import com.univalle.equipotres.viewmodel.DetailViewModel
 import com.univalle.equipotres.viewmodel.HomeViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
-class ItemDetailFragment : androidx.fragment.app.Fragment()  {
+@AndroidEntryPoint
+class ItemDetailFragment : Fragment() {
+
     private var _binding: FragmentItemDetailBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewModel: DetailViewModel
-    private lateinit var productAdapter: ProductAdapter
 
-
+    private val viewModel: DetailViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,11 +39,9 @@ class ItemDetailFragment : androidx.fragment.app.Fragment()  {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(this)[DetailViewModel::class.java]
-
+        // Recibir producto enviado desde el adaptador
         val product = arguments?.getParcelable<Product>("product")
 
-        // Asignar valores a la UI
         product?.let {
             binding.tvProductName.text = it.name
             binding.tvProductPrice.text = "$%.2f".format(it.price)
@@ -49,36 +50,38 @@ class ItemDetailFragment : androidx.fragment.app.Fragment()  {
         }
 
         binding.btnDeleteProduct.setOnClickListener {
-            showDeleteConfirmationDialog(product?.id)
+            showDeleteConfirmationDialog(product)
         }
 
         binding.fabEditProduct.setOnClickListener {
             val bundle = Bundle().apply {
-                putParcelable("product", product) // requiere @Parcelize en Product
+                putParcelable("product", product)
             }
-            findNavController().navigate(R.id.action_item_detail_to_editProductFragment, bundle)
+
+            findNavController().navigate(
+                R.id.action_item_detail_to_editProductFragment,
+                bundle
+            )
         }
 
-        // Volver a HomeFragment
-        val toolbar = binding.toolbarDetalle
-        toolbar.setNavigationOnClickListener {
+        binding.toolbarDetalle.setNavigationOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
     }
 
-    private fun showDeleteConfirmationDialog(productId: Int?) {
-        if (productId == null) return
+    private fun showDeleteConfirmationDialog(product: Product?) {
+        if (product == null || product.id.isEmpty()) return
 
         AlertDialog.Builder(requireContext())
             .setTitle("Confirmar eliminación")
-            .setMessage("¿Estás seguro de que deseas eliminar este producto?")
+            .setMessage("¿Deseas eliminar este producto?")
             .setNegativeButton("No") { dialog, _ ->
                 dialog.dismiss()
             }
             .setPositiveButton("Sí") { dialog, _ ->
-                // Eliminar producto de la base de datos
-                viewModel.deleteProductById(productId)
-                // Volver a HomeFragment
+                viewModel.deleteProduct(product.id)
+
+                // Regresar al Home luego de eliminar
                 findNavController().navigate(R.id.action_item_detail_to_homeFragment)
 
                 dialog.dismiss()
@@ -86,10 +89,8 @@ class ItemDetailFragment : androidx.fragment.app.Fragment()  {
             .show()
     }
 
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-
 }

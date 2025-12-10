@@ -1,30 +1,42 @@
 package com.univalle.equipotres.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.univalle.equipotres.database.AppDatabase
 import com.univalle.equipotres.model.Product
 import com.univalle.equipotres.repository.ProductRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class HomeViewModel(application: Application) : AndroidViewModel(application) {
-
+@HiltViewModel
+class HomeViewModel @Inject constructor(
     private val repository: ProductRepository
-    val allProducts: LiveData<List<Product>>
+) : ViewModel() {
+
+    private val _products = MutableStateFlow<List<Product>>(emptyList())
+    val products = _products
+
 
     init {
-        val productDao = AppDatabase.Companion.getDatabase(application).productDao()
-        repository = ProductRepository(productDao)
-        allProducts = repository.allProducts.asLiveData()
+        loadProducts()
     }
+
+    private fun loadProducts() {
+        viewModelScope.launch {
+            repository.getAllProducts().collect { productList ->
+                _products.value = productList
+
+            }
+        }
+    }
+
 
     fun getTotalInventoryValue(callback: (Double) -> Unit) {
         viewModelScope.launch {
-            val total = repository.getTotalInventoryValue()
-            callback(total)
+            callback(repository.getTotalInventoryValue())
         }
     }
 }

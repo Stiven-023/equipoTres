@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
 import com.univalle.equipotres.R
-import com.univalle.equipotres.database.AppDatabase
 import com.univalle.equipotres.view.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -59,31 +58,45 @@ class MyAppWidget : AppWidgetProvider() {
             //-----verificar inicio de sesión-------
             sessionManager = SessionManager(context)
 
-            if (sessionManager.isLoggedIn()){
-                // Mostrar saldo oculto o visible según el estado
+            if (sessionManager.isLoggedIn()) {
+
                 if (isBalanceVisible) {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        val db = AppDatabase.getDatabase(context)
-                        val totalBalance = db.productDao().getTotalInventoryValue() ?: 0.0
 
-                        val formatoColombiano = NumberFormat.getNumberInstance(Locale("es", "CO"))
-                        formatoColombiano.minimumFractionDigits = 2
-                        formatoColombiano.maximumFractionDigits = 2
-                        val saldoFormateado = "$ ${formatoColombiano.format(totalBalance)}"
+                    val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance()
 
-                        withContext(Dispatchers.Main) {
+                    firestore.collection("products")
+                        .get()
+                        .addOnSuccessListener { result ->
+
+                            var totalBalance = 0.0
+                            for (doc in result) {
+                                val price = doc.getDouble("price") ?: 0.0
+                                val quantity = doc.getLong("quantity")?.toInt() ?: 0
+                                totalBalance += price * quantity
+                            }
+
+                            val formatoColombiano = NumberFormat.getNumberInstance(Locale("es", "CO"))
+                            formatoColombiano.minimumFractionDigits = 2
+                            formatoColombiano.maximumFractionDigits = 2
+                            val saldoFormateado = "$ ${formatoColombiano.format(totalBalance)}"
+
                             views.setTextViewText(R.id.tvSaldoTotal, saldoFormateado)
                             views.setImageViewResource(R.id.btnEyeWidget, R.drawable.eye_slash)
                             appWidgetManager.updateAppWidget(appWidgetId, views)
                         }
-                    }
+                        .addOnFailureListener {
+                            views.setTextViewText(R.id.tvSaldoTotal, "Error")
+                            appWidgetManager.updateAppWidget(appWidgetId, views)
+                        }
+
                 } else {
-                    // Mostrar asteriscos
                     views.setTextViewText(R.id.tvSaldoTotal, "$ * * * *")
                     views.setImageViewResource(R.id.btnEyeWidget, R.drawable.eye)
                     appWidgetManager.updateAppWidget(appWidgetId, views)
                 }
-            }else{
+
+            } else {
+
                 // Intent para abrir la app (botón eye) al no haber iniciado sesión
                 val intentVerify = Intent(context, MainActivity::class.java)
                 val pendingIntentVerify = PendingIntent.getActivity(
