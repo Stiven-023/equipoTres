@@ -1,9 +1,7 @@
 package com.univalle.equipotres.view.fragment
 
-import android.widget.Toast
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import com.univalle.equipotres.databinding.FragmentAddProductBinding
 import com.univalle.equipotres.model.Product
 import com.univalle.equipotres.repository.ProductRepository
@@ -23,7 +21,7 @@ import org.mockito.MockitoAnnotations
 
 
 @ExperimentalCoroutinesApi
-class ViewModelTest {
+class AddProductTest {
 
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
