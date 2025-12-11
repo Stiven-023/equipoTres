@@ -6,6 +6,7 @@ plugins {
     id("com.google.gms.google-services")
     id("com.google.dagger.hilt.android")
     kotlin("kapt")
+    id("org.jetbrains.kotlinx.kover") version "0.9.4"
 }
 
 
