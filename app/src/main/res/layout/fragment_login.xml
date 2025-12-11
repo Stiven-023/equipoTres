@@ -5,46 +5,120 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#424242"
+    android:background="#000000"
     tools:context="view.fragment.LoginFragment">
 
-    <!-- Imagen superior derecha -->
+    <!-- Imagen superior -->
     <ImageView
         android:id="@+id/ivInventoryImage"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_marginTop="60dp"
-        android:layout_marginEnd="16dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="90dp"
+        android:layout_marginEnd="150dp"
         android:src="@drawable/ic_inventory"
         android:contentDescription="@string/inventory_image"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Título Inventory -->
-    <TextView
-        android:id="@+id/tvInventoryTitle"
-        android:layout_width="wrap_content"
+    <!-- Campo Email -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilEmail"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="@string/inventory"
-        android:textColor="#e7522e"
-        android:textSize="48sp"
-        android:textStyle="bold"
+        android:layout_marginTop="30dp"
+        android:textColorHint="@color/white"
+        app:boxBackgroundMode="outline"
+        app:boxStrokeColor="@color/white"
+        app:hintTextColor="@color/white"
+        app:boxBackgroundColor="@android:color/transparent"
+        app:layout_constraintTop_toBottomOf="@id/ivInventoryImage">
+
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/etEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Email"
+        android:inputType="textEmailAddress"
+        android:maxLength="40"
+        android:padding="12dp"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#FFFFFF" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Campo Password -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilPass"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:textColorHint="@color/white"
+        app:boxBackgroundMode="outline"
+        app:boxStrokeColor="@color/white"
+        app:hintTextColor="@color/white"
+        app:errorEnabled="true"
+        app:errorTextColor="@android:color/holo_red_light"
+        app:endIconMode="custom"
+        app:layout_constraintTop_toBottomOf="@id/tilEmail">
+
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etPass"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Password"
+            android:inputType="numberPassword"
+            android:maxLength="10"
+            android:padding="12dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#FFFFFF" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Custom Eye Icon -->
+    <ImageView
+        android:id="@+id/passwordToggle"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="22dp"
+        android:layout_marginBottom="15dp"
+        android:src="@drawable/eye"
+        app:tint="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="@id/tilPass"
+        app:layout_constraintEnd_toEndOf="@id/tilPass"
+        app:layout_constraintTop_toTopOf="@id/tilPass" />
+
+    <!-- Botón Guardar -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnLogin"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="42dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="@color/background_btn_guardar"
+        android:text="Login"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:enabled="false"
+        app:cornerRadius="28dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ivInventoryImage" />
+        app:layout_constraintTop_toBottomOf="@id/tilPass" />
 
-    <!-- Animación Lottie de huella digital -->
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/lottieFingerprint"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
-        android:layout_marginBottom="80dp"
-        app:lottie_rawRes="@raw/fingerprint"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+    <!-- Texto registro -->
+    <TextView
+        android:id="@+id/txtRegister"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="55dp"
+        android:layout_marginStart="150dp"
+        android:text="Registrarse"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:padding="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnLogin"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
