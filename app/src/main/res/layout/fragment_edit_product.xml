@@ -7,8 +7,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#CC000000"
-    tools:context=".EditarProductoFragment">
-
+    android:fitsSystemWindows="true"
+    tools:context=".view.fragment.EditProductFragment"
+    >
     <!-- Toolbar -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar_edit"
@@ -22,7 +23,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="28dp" />
+        android:layout_marginTop="1dp" />
 
     <!-- Id del producto -->
     <TextView
