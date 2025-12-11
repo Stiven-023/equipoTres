@@ -1,35 +1,5 @@
 package com.univalle.equipotres.utils
 
-/*
-import android.content.Context
-import android.content.SharedPreferences
-
-class SessionManager(context: Context) {
-
-    private val prefs: SharedPreferences = context.getSharedPreferences(
-        PREFS_NAME,
-        Context.MODE_PRIVATE
-    )
-
-    companion object {
-        private const val PREFS_NAME = "inventory_session"
-        private const val KEY_IS_LOGGED_IN = "is_logged_in"
-    }
-
-    fun isLoggedIn(): Boolean {
-        return prefs.getBoolean(KEY_IS_LOGGED_IN, false)
-    }
-
-    fun setLoggedIn(isLoggedIn: Boolean) {
-        prefs.edit().putBoolean(KEY_IS_LOGGED_IN, isLoggedIn).apply()
-    }
-
-    fun clearSession() {
-        prefs.edit().clear().apply()
-    }
-}
- */
-
 import android.content.Context
 import android.content.SharedPreferences
 import com.univalle.equipotres.model.User
@@ -49,6 +19,7 @@ class SessionManager @Inject constructor(
         private const val KEY_USER_ID = "user_id"
         private const val KEY_USER_EMAIL = "user_email"
         private const val KEY_IS_LOGGED_IN = "is_logged_in"
+        private const val KEY_OPENED_FROM_WIDGET = "opened_from_widget"
     }
 
     fun saveUserSession(user: User) {
@@ -78,5 +49,14 @@ class SessionManager @Inject constructor(
 
     fun isLoggedIn(): Boolean {
         return prefs.getBoolean(KEY_IS_LOGGED_IN, false)
+    }
+
+    // Funciones integradas desde la rama develop
+    fun setOpenedFromWidget(value: Boolean) {
+        prefs.edit().putBoolean(KEY_OPENED_FROM_WIDGET, value).apply()
+    }
+
+    fun wasOpenedFromWidget(): Boolean {
+        return prefs.getBoolean(KEY_OPENED_FROM_WIDGET, false)
     }
 }
