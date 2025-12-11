@@ -6,26 +6,28 @@
     android:id="@+id/fragment_add_product"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".view.fragment.AddProductFragment"
     android:background="#CC000000">
 
     <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
         android:background="#424242"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="28dp">
+        android:layout_marginTop="1dp">
 
         <ImageView
             android:id="@+id/btnBack"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@android:drawable/ic_menu_revert"
-            android:tint="@color/white"
-            android:contentDescription="Volver" />
+            android:contentDescription="Volver"
+            app:tint="@color/white" />
 
         <TextView
             android:layout_width="wrap_content"
