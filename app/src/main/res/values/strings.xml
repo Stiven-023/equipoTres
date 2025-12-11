@@ -19,4 +19,13 @@
     <string name="gestionar_inventario">Gestionar Inventario</string>
     <string name="boton_gestionar_inventario">boton gestionar inventario</string>
     <string name="default_show_inventary">$ * * * *</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="login_button">Login</string>
+    <string name="register_button">Registrarse</string>
+    <string name="min_digits_error">Mínimo 6 dígitos</string>
+    <string name="login_error">Login incorrecto</string>
+    <string name="register_error">Error en el registro</string>
+
+
 </resources>
