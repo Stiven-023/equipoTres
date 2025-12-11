@@ -9,4 +9,14 @@
     <color name="orange_dark">#E7522E</color>
     <color name="orange_light">#FA8523</color>
     <color name="opacyblack">#CC000000</color>
+    <color name="orange_primary">#FFE7522E</color>
+    <color name="orange_secondary">#FFFA8523</color>
+    <color name="gray_toolbar">#FF424242</color>
+    <color name="gray_text">#FF9EA1A1</color>
+    <color name="transparent_black">#CC000000</color>
+    <color name="bg_black_transparent">#CC000000</color>
+    <color name="inventory_orange">#FA8523</color>
+    <color name="text_gray">#9EA1A1</color>
+    <color name="red_error">#FF0000</color>
+    <color name="gray_register">#9EA1A1</color>
 </resources>
