@@ -21,6 +21,11 @@ import com.univalle.equipotres.utils.SessionManager
 class MyAppWidget : AppWidgetProvider() {
 
     companion object {
+
+        private const val REQ_GEAR = 1001
+        private const val REQ_VERIFY = 1002
+        //private const val REQ_TOGGLE = 1003
+
         private const val ACTION_TOGGLE_BALANCE = "com.univalle.equipotres.widget.TOGGLE_BALANCE"
         private lateinit var sessionManager: SessionManager
 
@@ -37,7 +42,7 @@ class MyAppWidget : AppWidgetProvider() {
             // Intent para abrir la app (botón engranaje)
             val intent = Intent(context, MainActivity::class.java)
             val pendingIntent = PendingIntent.getActivity(
-                context, 0, intent, PendingIntent.FLAG_IMMUTABLE
+                context, REQ_GEAR, intent, PendingIntent.FLAG_IMMUTABLE
             )
             views.setOnClickPendingIntent(R.id.btnGearWidget, pendingIntent)
 
@@ -100,7 +105,7 @@ class MyAppWidget : AppWidgetProvider() {
                 // Intent para abrir la app (botón eye) al no haber iniciado sesión
                 val intentVerify = Intent(context, MainActivity::class.java)
                 val pendingIntentVerify = PendingIntent.getActivity(
-                    context, 0, intentVerify, PendingIntent.FLAG_IMMUTABLE
+                    context, REQ_VERIFY, intentVerify, PendingIntent.FLAG_IMMUTABLE
                 )
                 views.setOnClickPendingIntent(R.id.btnEyeWidget, pendingIntentVerify)
                 appWidgetManager.updateAppWidget(appWidgetId, views)
