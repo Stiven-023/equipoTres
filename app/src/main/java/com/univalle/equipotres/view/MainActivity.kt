@@ -18,8 +18,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
     private lateinit var sessionManager: SessionManager
 
+    private var openedFromWidget = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        //--sirve para cerrar la app si es abierta desde el widget
+        openedFromWidget = intent.getBooleanExtra("opened_from_widget", false)
 
         // Ocultar ActionBar
         supportActionBar?.hide()
@@ -46,6 +51,19 @@ class MainActivity : AppCompatActivity() {
         }
 
         navController.graph = navGraph
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (sessionManager.wasOpenedFromWidget() && sessionManager.isLoggedIn()) {
+
+            // Borra el flag para no repetir
+            sessionManager.setOpenedFromWidget(false)
+
+            // Cierra la app
+            finishAffinity()
+        }
     }
 
     override fun onPause() {

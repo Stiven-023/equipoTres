@@ -26,4 +26,14 @@ class SessionManager(context: Context) {
     fun clearSession() {
         prefs.edit().clear().apply()
     }
+
+
+    fun setOpenedFromWidget(value: Boolean) {
+        prefs.edit().putBoolean("opened_from_widget", value).apply()
+    }
+
+    fun wasOpenedFromWidget(): Boolean {
+        return prefs.getBoolean("opened_from_widget", false)
+    }
+
 }

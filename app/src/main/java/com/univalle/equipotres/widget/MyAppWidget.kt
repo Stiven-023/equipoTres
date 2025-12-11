@@ -7,6 +7,9 @@ import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
 import com.univalle.equipotres.R
+import com.univalle.equipotres.di.WidgetEntryPoint
+import dagger.hilt.android.EntryPointAccessors
+
 import com.univalle.equipotres.view.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -39,6 +42,23 @@ class MyAppWidget : AppWidgetProvider() {
         ) {
             val views = RemoteViews(context.packageName, R.layout.app_widget)
 
+            //-----verificar inicio de sesión-------
+            //sessionManager = SessionManager(context)
+            //-obtener las dependencias (hilt)
+            val entryPoint = EntryPointAccessors.fromApplication(
+                context.applicationContext,
+                WidgetEntryPoint::class.java
+            )
+
+            val sessionManager = entryPoint.sessionManager()
+            val firestore = entryPoint.firestore()
+
+            //--------------------------------------------
+
+
+
+
+
             // Intent para abrir la app (botón engranaje)
             val intent = Intent(context, MainActivity::class.java)
             val pendingIntent = PendingIntent.getActivity(
@@ -60,14 +80,14 @@ class MyAppWidget : AppWidgetProvider() {
             views.setOnClickPendingIntent(R.id.btnEyeWidget, togglePendingIntent)
 
 
-            //-----verificar inicio de sesión-------
-            sessionManager = SessionManager(context)
+
 
             if (sessionManager.isLoggedIn()) {
 
                 if (isBalanceVisible) {
 
-                    val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                    //ya no es necesario el uso manual
+                    //val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance()
 
                     firestore.collection("products")
                         .get()
@@ -103,7 +123,11 @@ class MyAppWidget : AppWidgetProvider() {
             } else {
 
                 // Intent para abrir la app (botón eye) al no haber iniciado sesión
-                val intentVerify = Intent(context, MainActivity::class.java)
+                val intentVerify = Intent(context, MainActivity::class.java).apply {
+                    putExtra("opened_from_widget", true) //--con esto puedo verificar en el main si el open es desde el widget
+                }
+                SessionManager(context).setOpenedFromWidget(true)
+
                 val pendingIntentVerify = PendingIntent.getActivity(
                     context, REQ_VERIFY, intentVerify, PendingIntent.FLAG_IMMUTABLE
                 )
