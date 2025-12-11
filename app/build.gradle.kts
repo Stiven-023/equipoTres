@@ -116,5 +116,6 @@ dependencies {
 
     // Firestore (sin versión)
     implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-auth")
 
 }
