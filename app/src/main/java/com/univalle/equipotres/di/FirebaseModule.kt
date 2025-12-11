@@ -1,6 +1,7 @@
 package com.univalle.equipotres.di
 
 import android.content.Context
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.univalle.equipotres.utils.SessionManager
 import dagger.Module
@@ -24,5 +25,11 @@ object FirebaseModule {
     @Singleton
     fun provideFirestore(): FirebaseFirestore {
         return FirebaseFirestore.getInstance()
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseAuth(): FirebaseAuth {
+        return FirebaseAuth.getInstance()
     }
 }

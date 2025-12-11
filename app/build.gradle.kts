@@ -101,6 +101,7 @@ dependencies {
     testImplementation("org.mockito:mockito-core:5.21.0")
     testImplementation("org.mockito:mockito-inline:5.2.0")
     testImplementation("org.mockito:mockito-android:5.21.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:6.1.0")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
     debugImplementation("org.jacoco:org.jacoco.core:0.8.14")
@@ -116,5 +117,6 @@ dependencies {
 
     // Firestore (sin versión)
     implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-auth")
 
 }

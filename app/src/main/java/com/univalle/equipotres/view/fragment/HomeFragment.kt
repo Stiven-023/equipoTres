@@ -83,7 +83,7 @@ class HomeFragment : Fragment() {
                     } else {
                         binding.tvEmptyInventory.visibility = View.GONE
                         binding.rvProducts.visibility = View.VISIBLE
-                        productAdapter.submitList(products)
+                        productAdapter.submitList(products.toList())
                     }
                 }
             }

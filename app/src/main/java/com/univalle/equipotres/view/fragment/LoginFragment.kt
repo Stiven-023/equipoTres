@@ -1,30 +1,37 @@
 package com.univalle.equipotres.view.fragment
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.biometric.BiometricManager
-import androidx.biometric.BiometricPrompt
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-
-import com.google.android.material.snackbar.Snackbar
-import com.univalle.equipotres.databinding.FragmentLoginBinding
 import com.univalle.equipotres.R
+import com.univalle.equipotres.model.AuthResult
+import com.univalle.equipotres.databinding.FragmentLoginBinding
 import com.univalle.equipotres.utils.SessionManager
+import com.univalle.equipotres.viewmodel.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class LoginFragment : androidx.fragment.app.Fragment() {
+class LoginFragment : Fragment() {
 
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var sessionManager: SessionManager
-    private lateinit var biometricPrompt: BiometricPrompt
-    private lateinit var promptInfo: BiometricPrompt.PromptInfo
+    private val viewModel: LoginViewModel by viewModels()
+    private var isPasswordVisible = false
+
+    @Inject
+    lateinit var sessionManager: SessionManager
+
+    private var returnToWidget = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,73 +45,128 @@ class LoginFragment : androidx.fragment.app.Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        sessionManager = SessionManager(requireContext())
+        // Verificar si viene del widget
+        returnToWidget = arguments?.getBoolean("FROM_WIDGET", false) ?: false
 
-        // Verificar si ya hay sesión iniciada
-        val navController = findNavController()
-        if (sessionManager.isLoggedIn() && navController.currentDestination?.id == R.id.loginFragment) {
-            navigateToHome()
-            return
+        setupUI()
+        setupObservers()
+    }
+
+    private fun setupUI() {
+        // Email TextWatcher
+        binding.etEmail.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                viewModel.validateEmail(s.toString())
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        // Password TextWatcher
+        binding.etPassword.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                viewModel.validatePassword(s.toString())
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        // Toggle password visibility
+        binding.tilPassword.setEndIconOnClickListener {
+            togglePasswordVisibility()
         }
 
-        setupBiometric()
+        // Login button
+        binding.btnLogin.setOnClickListener {
+            val email = binding.etEmail.text.toString()
+            val password = binding.etPassword.text.toString()
+            viewModel.login(email, password)
+        }
 
-        // Clic en la animación de huella
-        binding.lottieFingerprint.setOnClickListener {
-            if (isBiometricAvailable()) {
-                biometricPrompt.authenticate(promptInfo)
+        // Register button
+        binding.tvRegister.setOnClickListener {
+            val email = binding.etEmail.text.toString()
+            val password = binding.etPassword.text.toString()
+            viewModel.register(email, password)
+        }
+    }
+
+    private fun setupObservers() {
+        // Observe password validation
+        viewModel.passwordError.observe(viewLifecycleOwner) { error ->
+            binding.tilPassword.error = error
+            if (error != null) {
+                binding.tilPassword.boxStrokeColor =
+                    ContextCompat.getColor(requireContext(), android.R.color.holo_red_dark)
+            }  else {
+                // Cuando el password es válido → borde blanco
+                binding.tilPassword.boxStrokeColor =
+                    ContextCompat.getColor(requireContext(), android.R.color.white)
+            }
+        }
+
+        // Observe fields validity
+        viewModel.fieldsValid.observe(viewLifecycleOwner) { isValid ->
+            binding.btnLogin.isEnabled = isValid
+            binding.tvRegister.isEnabled = isValid
+
+            if (isValid) {
+                binding.tvRegister.setTextColor(
+                    ContextCompat.getColor(requireContext(), android.R.color.white)
+                )
             } else {
-                showBiometricNotAvailableMessage()
+                binding.tvRegister.setTextColor(
+                    ContextCompat.getColor(requireContext(), R.color.gray_register)
+                )
+            }
+        }
+
+        // Observe authentication result
+        viewModel.authResult.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is AuthResult.Loading -> {
+                    showLoading(true)
+                }
+                is AuthResult.Success -> {
+                    showLoading(false)
+                    sessionManager.saveUserSession(result.user)
+
+                    if (returnToWidget) {
+                        // Si viene del widget, cerrar la app para regresar al widget
+                        requireActivity().finishAffinity()
+                    } else {
+                        // Navegar al Home usando Navigation Component
+                        navigateToHome()
+                    }
+                }
+                is AuthResult.Error -> {
+                    showLoading(false)
+                    Toast.makeText(requireContext(), result.message, Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
 
-    private fun setupBiometric() {
-        val executor = ContextCompat.getMainExecutor(requireContext())
+    private fun togglePasswordVisibility() {
+        isPasswordVisible = !isPasswordVisible
 
-        biometricPrompt = BiometricPrompt(this, executor,
-            object : BiometricPrompt.AuthenticationCallback() {
-                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                    super.onAuthenticationError(errorCode, errString)
-                    if (errorCode != BiometricPrompt.ERROR_USER_CANCELED &&
-                        errorCode != BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
-                        Snackbar.make(binding.root, "Error: $errString", Snackbar.LENGTH_SHORT).show()
-                    }
-                }
-
-                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                    super.onAuthenticationSucceeded(result)
-                    sessionManager.setLoggedIn(true)
-                    navigateToHome()
-                }
-
-                override fun onAuthenticationFailed() {
-                    super.onAuthenticationFailed()
-                    // El sistema muestra automáticamente el mensaje de error
-                }
-            })
-
-        promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle("Autenticación con Biometría")
-            .setSubtitle("Ingrese su huella digital")
-            .setNegativeButtonText("Cancelar")
-            .build()
-    }
-
-    private fun isBiometricAvailable(): Boolean {
-        val biometricManager = BiometricManager.from(requireContext())
-        return when (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)) {
-            BiometricManager.BIOMETRIC_SUCCESS -> true
-            else -> false
+        if (isPasswordVisible) {
+            binding.etPassword.inputType = android.text.InputType.TYPE_CLASS_NUMBER
+            binding.tilPassword.setEndIconDrawable(R.drawable.ic_eye_closed)
+        } else {
+            binding.etPassword.inputType = android.text.InputType.TYPE_CLASS_NUMBER or
+                    android.text.InputType.TYPE_NUMBER_VARIATION_PASSWORD
+            binding.tilPassword.setEndIconDrawable(R.drawable.ic_eye_open)
         }
+
+        // Mantener el cursor al final
+        binding.etPassword.setSelection(binding.etPassword.text?.length ?: 0)
     }
 
-    private fun showBiometricNotAvailableMessage() {
-        Snackbar.make(
-            binding.root,
-            "Autenticación biométrica no disponible",
-            Snackbar.LENGTH_LONG
-        ).show()
+    private fun showLoading(show: Boolean) {
+        binding.progressBar.visibility = if (show) View.VISIBLE else View.GONE
+        binding.btnLogin.isEnabled = !show
+        binding.tvRegister.isEnabled = !show
     }
 
     private fun navigateToHome() {
