@@ -98,6 +98,10 @@ class LoginFragment : Fragment() {
             if (error != null) {
                 binding.tilPassword.boxStrokeColor =
                     ContextCompat.getColor(requireContext(), android.R.color.holo_red_dark)
+            }  else {
+                // Cuando el password es válido → borde blanco
+                binding.tilPassword.boxStrokeColor =
+                    ContextCompat.getColor(requireContext(), android.R.color.white)
             }
         }
 

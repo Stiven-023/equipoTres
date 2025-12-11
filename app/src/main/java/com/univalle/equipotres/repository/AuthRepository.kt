@@ -27,7 +27,7 @@ class AuthRepository @Inject constructor(
                 AuthResult.Error("Login incorrecto")
             }
         } catch (e: Exception) {
-            AuthResult.Error(e.message ?: "Login incorrecto")
+            AuthResult.Error( "Login incorrecto")
         }
     }
 
@@ -46,7 +46,7 @@ class AuthRepository @Inject constructor(
                 AuthResult.Error("Error en el registro")
             }
         } catch (e: Exception) {
-            AuthResult.Error(e.message ?: "Error en el registro")
+            AuthResult.Error("Error en el registro")
         }
     }
 
