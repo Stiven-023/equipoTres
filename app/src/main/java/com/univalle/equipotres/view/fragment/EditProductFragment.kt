@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.univalle.equipotres.R
 import com.univalle.equipotres.databinding.FragmentEditProductBinding
 import com.univalle.equipotres.model.Product
 import com.univalle.equipotres.viewmodel.DetailViewModel
@@ -39,7 +40,6 @@ class EditProductFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Recuperar producto enviado desde HomeFragment
         product = arguments?.getParcelable("product")
         Log.d("EditProductFragment", "Producto recibido: $product")
 
@@ -49,18 +49,14 @@ class EditProductFragment : Fragment() {
             return
         }
 
-        // Mostrar datos actuales
         fillFields(product!!)
 
-        // Botón atrás
         binding.toolbarEdit.setNavigationOnClickListener {
             findNavController().navigateUp()
         }
 
-        // Validación
         setupValidation()
 
-        // Guardar cambios
         binding.btnEditar.setOnClickListener {
             updateProduct()
         }
@@ -121,16 +117,23 @@ class EditProductFragment : Fragment() {
             quantity = quantity
         )
 
+        // Deshabilitar botón mientras actualiza
+        binding.btnEditar.isEnabled = false
+
         lifecycleScope.launch {
             try {
-                viewModel.updateProduct(updatedProduct)   // 🔥 Firestore update desde Repository
+                // Actualiza en Firestore
+                viewModel.updateProduct(updatedProduct)
 
                 Toast.makeText(requireContext(), "Producto actualizado", Toast.LENGTH_SHORT).show()
-                findNavController().navigateUp()
+
+                // Volver al HomeFragment directamente (igual que al eliminar)
+                findNavController().popBackStack(R.id.homeFragment, false)
 
             } catch (e: Exception) {
                 Log.e("EditProductFragment", "Error actualizando: ${e.message}")
                 Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                binding.btnEditar.isEnabled = true
             }
         }
     }

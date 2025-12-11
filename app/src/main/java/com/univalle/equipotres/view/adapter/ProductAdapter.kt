@@ -60,7 +60,19 @@ class ProductAdapter(
         }
 
         override fun areContentsTheSame(oldItem: Product, newItem: Product): Boolean {
-            return oldItem == newItem
+            // ✅ Compara TODO el contenido para detectar cambios
+            return oldItem.name == newItem.name &&
+                    oldItem.price == newItem.price &&
+                    oldItem.quantity == newItem.quantity
+        }
+
+        override fun getChangePayload(oldItem: Product, newItem: Product): Any? {
+            // ✅ Retorna los campos que cambiaron para animaciones más suaves
+            return if (oldItem != newItem) {
+                true
+            } else {
+                null
+            }
         }
     }
 }
