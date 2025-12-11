@@ -18,6 +18,9 @@ import kotlinx.coroutines.withContext
 import java.text.NumberFormat
 import java.util.Locale
 
+import android.util.Log
+
+
 import com.univalle.equipotres.utils.SessionManager
 
 
@@ -27,10 +30,8 @@ class MyAppWidget : AppWidgetProvider() {
 
         private const val REQ_GEAR = 1001
         private const val REQ_VERIFY = 1002
-        //private const val REQ_TOGGLE = 1003
 
         private const val ACTION_TOGGLE_BALANCE = "com.univalle.equipotres.widget.TOGGLE_BALANCE"
-        private lateinit var sessionManager: SessionManager
 
         // Estado del botón de mostrar/ocultar saldo
         private var isBalanceVisible = false
@@ -50,6 +51,7 @@ class MyAppWidget : AppWidgetProvider() {
                 WidgetEntryPoint::class.java
             )
 
+            //val sessionManager = SessionManager(context.applicationContext)
             val sessionManager = entryPoint.sessionManager()
             val firestore = entryPoint.firestore()
 
@@ -78,7 +80,6 @@ class MyAppWidget : AppWidgetProvider() {
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
             views.setOnClickPendingIntent(R.id.btnEyeWidget, togglePendingIntent)
-
 
 
 
@@ -123,10 +124,8 @@ class MyAppWidget : AppWidgetProvider() {
             } else {
 
                 // Intent para abrir la app (botón eye) al no haber iniciado sesión
-                val intentVerify = Intent(context, MainActivity::class.java).apply {
-                    putExtra("opened_from_widget", true) //--con esto puedo verificar en el main si el open es desde el widget
-                }
-                SessionManager(context).setOpenedFromWidget(true)
+                sessionManager.setOpenedFromWidget(true)
+                val intentVerify = Intent(context, MainActivity::class.java)
 
                 val pendingIntentVerify = PendingIntent.getActivity(
                     context, REQ_VERIFY, intentVerify, PendingIntent.FLAG_IMMUTABLE

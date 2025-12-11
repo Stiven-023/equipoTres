@@ -50,8 +50,8 @@
 
     <ImageView
         android:id="@+id/btnEyeWidget"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
         android:src="@drawable/eye"
         android:contentDescription="@string/eye_widget"
         android:layout_alignParentTop="true"

@@ -23,9 +23,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //--sirve para cerrar la app si es abierta desde el widget
-        openedFromWidget = intent.getBooleanExtra("opened_from_widget", false)
-
         // Ocultar ActionBar
         supportActionBar?.hide()
 
@@ -58,10 +55,10 @@ class MainActivity : AppCompatActivity() {
 
         if (sessionManager.wasOpenedFromWidget() && sessionManager.isLoggedIn()) {
 
-            // Borra el flag para no repetir
+            // limpiar flag
             sessionManager.setOpenedFromWidget(false)
 
-            // Cierra la app
+            // cerrar app = volver al widget
             finishAffinity()
         }
     }

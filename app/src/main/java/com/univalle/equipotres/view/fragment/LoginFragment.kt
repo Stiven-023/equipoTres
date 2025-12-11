@@ -1,5 +1,8 @@
 package com.univalle.equipotres.view.fragment
 
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -16,6 +19,7 @@ import com.univalle.equipotres.model.AuthResult
 import com.univalle.equipotres.databinding.FragmentLoginBinding
 import com.univalle.equipotres.utils.SessionManager
 import com.univalle.equipotres.viewmodel.LoginViewModel
+import com.univalle.equipotres.widget.MyAppWidget
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -46,7 +50,8 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Verificar si viene del widget
-        returnToWidget = arguments?.getBoolean("FROM_WIDGET", false) ?: false
+        //returnToWidget = arguments?.getBoolean("FROM_WIDGET", false) ?: false
+        returnToWidget = sessionManager.wasOpenedFromWidget()
 
         setupUI()
         setupObservers()
@@ -131,11 +136,36 @@ class LoginFragment : Fragment() {
                     showLoading(false)
                     sessionManager.saveUserSession(result.user)
 
-                    if (returnToWidget) {
+                    //if (returnToWidget) {
                         // Si viene del widget, cerrar la app para regresar al widget
-                        requireActivity().finishAffinity()
-                    } else {
+                    //    requireActivity().finishAffinity()
+                    //} else {
                         // Navegar al Home usando Navigation Component
+                    //    navigateToHome()
+                    //}
+                    if (returnToWidget) {
+
+                        // 1) Actualizar el widget
+                        val appWidgetManager = AppWidgetManager.getInstance(requireContext())
+                        val widgetComponent = ComponentName(
+                            requireContext(),
+                            MyAppWidget::class.java
+                        )
+                        val ids = appWidgetManager.getAppWidgetIds(widgetComponent)
+
+                        val updateIntent = Intent(requireContext(), MyAppWidget::class.java).apply {
+                            action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+                            putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+                        }
+                        requireContext().sendBroadcast(updateIntent)
+
+                        // 2) Borrar el flag
+                        sessionManager.setOpenedFromWidget(false)
+
+                        // 3) Cerrar la app → regresa al widget
+                        requireActivity().finishAffinity()
+
+                    } else {
                         navigateToHome()
                     }
                 }
